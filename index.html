@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+p<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -264,16 +264,7 @@ document.getElementById("foodPhoto")
 
   preview.style.display = "block";
 
-  /*
-    Temporary calorie estimate.
-
-    Later we will connect this section
-    to the FTDieta AI server so the actual
-    photograph is analyzed automatically.
-  */
-
-  currentCalories =
-    Math.floor(Math.random() * 450) + 100;
+currentCalories = 350;
 
   document.getElementById("foodName").textContent =
     "Estimated meal";
@@ -294,7 +285,7 @@ function addCalories() {
   monthTotal += currentCalories;
 
   localStorage.setItem(
-    "todayCalories",
+    "todayCalories",o
     todayTotal
   );
 
