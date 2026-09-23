@@ -10,8 +10,6 @@ export const config = {
 
 export default async function handler(req, res) {
 
-  // Allow only POST requests
-
   if (req.method !== "POST") {
 
     return res.status(405).json({
@@ -24,8 +22,6 @@ export default async function handler(req, res) {
 
   try {
 
-    // Make sure the OpenAI API key exists
-
     if (!process.env.OPENAI_API_KEY) {
 
       return res.status(500).json({
@@ -36,7 +32,7 @@ export default async function handler(req, res) {
 
     }
 
-    // Read the uploaded multipart/form-data image
+    // Read multipart/form-data
 
     const contentType = req.headers["content-type"] || "";
 
@@ -50,7 +46,11 @@ export default async function handler(req, res) {
 
     }
 
-    const boundaryMatch = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/);
+    const boundaryMatch = contentType.match(
+
+      /boundary=(?:"([^"]+)"|([^;]+))/
+
+    );
 
     if (!boundaryMatch) {
 
@@ -62,7 +62,9 @@ export default async function handler(req, res) {
 
     }
 
-    const boundary = boundaryMatch[1] || boundaryMatch[2];
+    const boundary =
+
+      boundaryMatch[1] || boundaryMatch[2];
 
     const chunks = [];
 
@@ -74,11 +76,13 @@ export default async function handler(req, res) {
 
     const bodyBuffer = Buffer.concat(chunks);
 
-    // Convert multipart body to binary-safe string
+    const bodyString =
 
-    const bodyString = bodyBuffer.toString("latin1");
+      bodyBuffer.toString("latin1");
 
-    const parts = bodyString.split("--" + boundary);
+    const parts =
+
+      bodyString.split("--" + boundary);
 
     let imageBuffer = null;
 
@@ -96,7 +100,9 @@ export default async function handler(req, res) {
 
         const separator = "\r\n\r\n";
 
-        const separatorIndex = part.indexOf(separator);
+        const separatorIndex =
+
+          part.indexOf(separator);
 
         if (separatorIndex === -1) {
 
@@ -104,7 +110,9 @@ export default async function handler(req, res) {
 
         }
 
-        const headers = part.substring(0, separatorIndex);
+        const headers =
+
+          part.substring(0, separatorIndex);
 
         const mimeMatch = headers.match(
 
@@ -124,15 +132,15 @@ export default async function handler(req, res) {
 
         );
 
-        // Remove trailing multipart CRLF
-
         if (fileData.endsWith("\r\n")) {
 
           fileData = fileData.slice(0, -2);
 
         }
 
-        imageBuffer = Buffer.from(fileData, "latin1");
+        imageBuffer =
+
+          Buffer.from(fileData, "latin1");
 
         break;
 
@@ -150,19 +158,21 @@ export default async function handler(req, res) {
 
     }
 
-    // Convert image to base64
+    // Convert photo to base64 data URL
 
-    const base64Image = imageBuffer.toString("base64");
+    const base64Image =
+
+      imageBuffer.toString("base64");
 
     const dataUrl =
 
       `data:${mimeType};base64,${base64Image}`;
 
-    // Send image to OpenAI
+    // Send photo to OpenAI Responses API
 
     const openAIResponse = await fetch(
 
-      "https://api.openai.com/v1/chat/completions",
+      "https://api.openai.com/v1/responses",
 
       {
 
@@ -180,41 +190,9 @@ export default async function handler(req, res) {
 
         body: JSON.stringify({
 
-          model: "gpt-4.1-mini",
+          model: "gpt-5.6-luna",
 
-          response_format: {
-
-            type: "json_object",
-
-          },
-
-          messages: [
-
-            {
-
-              role: "system",
-
-              content:
-
-                "You are a food nutrition analysis assistant. " +
-
-                "Analyze the food shown in the photograph. " +
-
-                "Identify the food or meal and estimate the total calories " +
-
-                "for the visible portion. " +
-
-                "Return ONLY valid JSON with exactly these fields: " +
-
-                '{"foodName":"description of food","calories":number}. ' +
-
-                "Calories must be a whole number. " +
-
-                "If multiple foods are visible, describe the complete meal " +
-
-                "and estimate the combined calories.",
-
-            },
+          input: [
 
             {
 
@@ -224,43 +202,57 @@ export default async function handler(req, res) {
 
                 {
 
-                  type: "text",
+                  type: "input_text",
 
                   text:
 
-                    "Analyze this food photo and estimate the calories.",
+                    "Analyze this food photograph. " +
+
+                    "Identify the visible food or meal and " +
+
+                    "estimate the total calories for the " +
+
+                    "visible portion. Return ONLY valid JSON " +
+
+                    "in exactly this format: " +
+
+                    '{"foodName":"description","calories":500}. ' +
+
+                    "Calories must be a whole number. " +
+
+                    "If several foods are visible, describe " +
+
+                    "the complete meal and estimate their " +
+
+                    "combined calories."
 
                 },
 
                 {
 
-                  type: "image_url",
+                  type: "input_image",
 
-                  image_url: {
+                  image_url: dataUrl
 
-                    url: dataUrl,
+                }
 
-                  },
+              ]
 
-                },
-
-              ],
-
-            },
+            }
 
           ],
 
-          temperature: 0.2,
+          max_output_tokens: 300
 
-          max_tokens: 300,
-
-        }),
+        })
 
       }
 
     );
 
-    const openAIData = await openAIResponse.json();
+    const openAIData =
+
+      await openAIResponse.json();
 
     if (!openAIResponse.ok) {
 
@@ -280,25 +272,69 @@ export default async function handler(req, res) {
 
           openAIData?.error?.message ||
 
-          "Unknown OpenAI error",
+          "Unknown OpenAI error"
 
       });
 
     }
 
-    const responseText =
+    // Extract text from Responses API
 
-      openAIData?.choices?.[0]?.message?.content;
+    let responseText = "";
+
+    if (openAIData.output_text) {
+
+      responseText = openAIData.output_text;
+
+    } else if (Array.isArray(openAIData.output)) {
+
+      for (const item of openAIData.output) {
+
+        if (!Array.isArray(item.content)) {
+
+          continue;
+
+        }
+
+        for (const content of item.content) {
+
+          if (
+
+            content.type === "output_text" &&
+
+            content.text
+
+          ) {
+
+            responseText += content.text;
+
+          }
+
+        }
+
+      }
+
+    }
 
     if (!responseText) {
 
       return res.status(500).json({
 
-        error: "No analysis returned",
+        error: "No analysis returned"
 
       });
 
     }
+
+    // Remove possible markdown fences
+
+    responseText = responseText
+
+      .replace(/```json/gi, "")
+
+      .replace(/```/g, "")
+
+      .trim();
 
     let result;
 
@@ -320,6 +356,8 @@ export default async function handler(req, res) {
 
         error: "Could not understand analysis result",
 
+        details: responseText
+
       });
 
     }
@@ -336,35 +374,37 @@ export default async function handler(req, res) {
 
       return res.status(500).json({
 
-        error: "Invalid calorie estimate",
+        error: "Invalid calorie estimate"
 
       });
 
     }
 
-    // This matches what your index.html expects:
-
-    // data.foodName
-
-    // data.calories
+    // Return exactly what index.html expects
 
     return res.status(200).json({
 
       foodName,
 
-      calories,
+      calories
 
     });
 
   } catch (error) {
 
-    console.error("Analyze API error:", error);
+    console.error(
+
+      "Analyze API error:",
+
+      error
+
+    );
 
     return res.status(500).json({
 
       error: "Unable to analyze the food photo",
 
-      details: error.message,
+      details: error.message
 
     });
 
