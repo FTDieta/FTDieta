@@ -1,4 +1,4 @@
-pp<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -242,11 +242,8 @@ function updateTotals() {
 
   document.getElementById("month").textContent = monthTotal;
 
-  document.getElementById("dailyConsumed").textContent = todayTotal;
+  document.getElementById("dailyConsumed").textContent = updateTotals();
 
-}
-
-updateTotals();
 
 
 document.getElementById("foodPhoto")
