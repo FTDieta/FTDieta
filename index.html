@@ -1,219 +1,561 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+
+    name="viewport"
+
+    content="width=device-width, initial-scale=1.0"
+
+  >
+
   <title>FTDieta</title>
 
   <style>
-    * { box-sizing: border-box; }
+
+    * {
+
+      box-sizing: border-box;
+
+    }
 
     body {
+
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: linear-gradient(160deg, #071a12, #102b20);
+
+      font-family:
+
+        -apple-system,
+
+        BlinkMacSystemFont,
+
+        "Segoe UI",
+
+        sans-serif;
+
+      background:
+
+        linear-gradient(
+
+          160deg,
+
+          #071a12,
+
+          #102b20
+
+        );
+
       color: white;
+
       min-height: 100vh;
+
     }
 
     .app {
+
       max-width: 480px;
+
       margin: auto;
-      padding: 25px 20px 50px;
+
+      padding:
+
+        25px
+
+        20px
+
+        50px;
+
     }
 
     h1 {
+
       text-align: center;
+
       color: #55df8a;
+
       font-size: 42px;
+
       margin-bottom: 5px;
+
     }
 
     .tagline {
+
       text-align: center;
+
       color: #c5d8cc;
+
       margin-bottom: 25px;
+
     }
 
     .card {
-      background: rgba(255,255,255,.09);
-      border: 1px solid rgba(255,255,255,.12);
+
+      background:
+
+        rgba(
+
+          255,
+
+          255,
+
+          255,
+
+          .09
+
+        );
+
+      border:
+
+        1px solid
+
+        rgba(
+
+          255,
+
+          255,
+
+          255,
+
+          .12
+
+        );
+
       border-radius: 22px;
+
       padding: 20px;
+
       margin-bottom: 18px;
+
     }
 
     .camera {
+
       text-align: center;
-      padding: 30px 15px;
+
+      padding:
+
+        30px
+
+        15px;
+
     }
 
     .camera-icon {
+
       font-size: 65px;
+
     }
 
-    button, .photo-button {
+    button,
+
+    .photo-button {
+
       display: block;
+
       width: 100%;
+
       border: 0;
+
       border-radius: 15px;
+
       padding: 16px;
+
       margin-top: 12px;
+
       background: #39c873;
+
       color: #062313;
+
       font-weight: 700;
+
       font-size: 18px;
+
       text-align: center;
+
       cursor: pointer;
+
     }
 
     .photo-button input {
+
       display: none;
+
     }
 
     #preview {
+
       width: 100%;
+
       border-radius: 16px;
+
       margin-top: 15px;
+
       display: none;
+
     }
 
     .result {
+
       display: none;
+
     }
 
     .calories {
+
       font-size: 38px;
+
       font-weight: bold;
+
       color: #5ee391;
+
       text-align: center;
+
     }
 
     .question {
+
       text-align: center;
+
       font-size: 20px;
+
     }
 
     .secondary {
+
       background: #253c31;
+
       color: white;
+
     }
 
     .stats {
+
       display: grid;
-      grid-template-columns: repeat(3,1fr);
+
+      grid-template-columns:
+
+        repeat(
+
+          3,
+
+          1fr
+
+        );
+
       gap: 10px;
+
     }
 
     .stat {
+
       text-align: center;
-      background: rgba(255,255,255,.07);
-      padding: 14px 5px;
+
+      background:
+
+        rgba(
+
+          255,
+
+          255,
+
+          255,
+
+          .07
+
+        );
+
+      padding:
+
+        14px
+
+        5px;
+
       border-radius: 15px;
+
     }
 
     .stat strong {
+
       display: block;
+
       color: #5ee391;
+
       font-size: 22px;
+
     }
 
     .small {
+
       color: #b8c9bf;
+
       font-size: 13px;
+
     }
+
+    .status {
+
+      text-align: center;
+
+      color: #c5d8cc;
+
+      margin-top: 12px;
+
+      display: none;
+
+    }
+
   </style>
+
 </head>
 
 <body>
 
 <div class="app">
 
-  <h1>FTDieta</h1>
-  <div class="tagline">Photo. Know. Decide. Track.</div>
+  <h1>
 
-  <div class="card camera">
+    FTDieta
 
-    <div class="camera-icon">📸</div>
+  </h1>
 
-    <h2>What are you about to eat or drink?</h2>
+  <div class="tagline">
 
-    <p class="small">
-      Take a photo and FTDieta will help estimate the calories.
-    </p>
-
-    <label class="photo-button">
-      Take Food Photo
-      <input
-        type="file"
-        accept="image/*"
-        capture="environment"
-        id="foodPhoto"
-      >
-    </label>
-
-    <img id="preview">
+    Photo. Know. Decide. Track.
 
   </div>
 
-  <div class="card result" id="result">
+  <!-- PHOTO SECTION -->
 
-    <h2 id="foodName">Food detected</h2>
+  <div class="card camera">
 
-    <div class="calories">
-      <span id="estimatedCalories">---</span> cal
+    <div class="camera-icon">
+
+      📸
+
     </div>
 
-    <p class="question">Will you eat or drink it?</p>
+    <h2>
 
-    <button onclick="addCalories()">YES — ADD CALORIES</button>
+      What are you about to eat or drink?
 
-    <button class="secondary" onclick="cancelFood()">
+    </h2>
+
+    <p class="small">
+
+      Take a photo and FTDieta
+
+      will help estimate the calories.
+
+    </p>
+
+    <label class="photo-button">
+
+      Take Food Photo
+
+      <input
+
+        type="file"
+
+        accept="image/*"
+
+        capture="environment"
+
+        id="foodPhoto"
+
+      >
+
+    </label>
+
+    <img
+
+      id="preview"
+
+      alt="Food preview"
+
+    >
+
+    <div
+
+      class="status"
+
+      id="analysisStatus"
+
+    >
+
+      Analyzing your food...
+
+    </div>
+
+  </div>
+
+  <!-- ANALYSIS RESULT -->
+
+  <div
+
+    class="card result"
+
+    id="result"
+
+  >
+
+    <h2 id="foodName">
+
+      Food detected
+
+    </h2>
+
+    <div class="calories">
+
+      <span id="estimatedCalories">
+
+        ---
+
+      </span>
+
+      cal
+
+    </div>
+
+    <p class="question">
+
+      Will you eat or drink it?
+
+    </p>
+
+    <button
+
+      id="addButton"
+
+      onclick="addCalories()"
+
+    >
+
+      YES — ADD CALORIES
+
+    </button>
+
+    <button
+
+      class="secondary"
+
+      onclick="cancelFood()"
+
+    >
+
       NO — DON'T ADD
+
     </button>
 
   </div>
 
+  <!-- CALORIE TRACKER -->
+
   <div class="card">
 
-    <h2>Your calorie tracker</h2>
+    <h2>
+
+      Your calorie tracker
+
+    </h2>
 
     <div class="stats">
 
       <div class="stat">
-        <span class="small">TODAY</span>
-        <strong id="today">0</strong>
+
+        <span class="small">
+
+          TODAY
+
+        </span>
+
+        <strong id="today">
+
+          0
+
+        </strong>
+
         cal
+
       </div>
 
       <div class="stat">
-        <span class="small">WEEK</span>
-        <strong id="week">0</strong>
+
+        <span class="small">
+
+          WEEK
+
+        </span>
+
+        <strong id="week">
+
+          0
+
+        </strong>
+
         cal
+
       </div>
 
       <div class="stat">
-        <span class="small">MONTH</span>
-        <strong id="month">0</strong>
+
+        <span class="small">
+
+          MONTH
+
+        </span>
+
+        <strong id="month">
+
+          0
+
+        </strong>
+
         cal
+
       </div>
 
     </div>
 
   </div>
 
+  <!-- DAILY GOAL -->
+
   <div class="card">
 
-    <h2>Daily Goal</h2>
+    <h2>
+
+      Daily Goal
+
+    </h2>
 
     <p>
+
       Calories consumed:
-      <strong id="dailyConsumed">0</strong>
+
+      <strong id="dailyConsumed">
+
+        0
+
+      </strong>
+
     </p>
 
     <p>
+
       Recommended daily target:
-      <strong>2,000 calories</strong>
+
+      <strong>
+
+        2,000 calories
+
+      </strong>
+
     </p>
 
   </div>
@@ -222,150 +564,622 @@
 
 <script>
 
+/*
+
+========================================
+
+FTDIETA CALORIE TRACKER
+
+========================================
+
+*/
+
 let currentCalories = 0;
 
 let todayTotal =
-  Number(localStorage.getItem("todayCalories")) || 0;
+
+  Number(
+
+    localStorage.getItem(
+
+      "todayCalories"
+
+    )
+
+  ) || 0;
 
 let weekTotal =
-  Number(localStorage.getItem("weekCalories")) || 0;
+
+  Number(
+
+    localStorage.getItem(
+
+      "weekCalories"
+
+    )
+
+  ) || 0;
 
 let monthTotal =
-  Number(localStorage.getItem("monthCalories")) || 0;
 
+  Number(
+
+    localStorage.getItem(
+
+      "monthCalories"
+
+    )
+
+  ) || 0;
+
+/*
+
+========================================
+
+UPDATE CALORIE TOTALS
+
+========================================
+
+*/
 
 function updateTotals() {
 
-  document.getElementById("today").textContent = todayTotal;
+  document
 
-  document.getElementById("week").textContent = weekTotal;
+    .getElementById("today")
 
-  document.getElementById("month").textContent = monthTotal;
+    .textContent =
 
-  document.getElementById("dailyConsumed").textContent = updateTotals();
+      todayTotal;
 
+  document
 
+    .getElementById("week")
 
-document.getElementById("foodPhoto")
-.addEventListener("change", function(event) {
+    .textContent =
 
-  const file = event.target.files[0];
+      weekTotal;
 
-  if (!file) return;
+  document
 
-  const preview =
-    document.getElementById("preview");
+    .getElementById("month")
 
-  preview.src =
-    URL.createObjectURL(file);
+    .textContent =
 
-  preview.style.display = "block";
+      monthTotal;
 
-const formData = new FormData();
-formData.append("image", file);
-try {
-  const response = await fetch("/api/analyze-food", {
-    method: "POST",
-    body: formData
-  });
+  document
 
-  const data = await response.json();
+    .getElementById("dailyConsumed")
 
-  document.getElementById("foodName").textContent =
-    data.foodName || "Estimated meal";
+    .textContent =
 
-  currentCalories = data.calories || 0;
+      todayTotal;
 
-  document.getElementById("estimatedCalories").textContent =
-    currentCalories;
-
-  document.getElementById("result").style.display = "block";
-
-} catch (error) {
-  console.error("Food analysis error:", error);
-  alert("Unable to analyze the food image. Please try again.");
 }
 
+/*
 
+Display saved totals
 
-  document.getElementById("foodName").textContent =
-    "Estimated meal";
+when FTDieta opens.
 
-  document.getElementById("estimatedCalories").textContent =
-    currentCalories;
+*/
 
-  document.getElementById("result").style.display =
-    "block";
+updateTotals();
 
-});
+/*
 
+========================================
+
+PHOTO SELECTION
+
+========================================
+
+*/
+
+document
+
+  .getElementById("foodPhoto")
+
+  .addEventListener(
+
+    "change",
+
+    async function(event) {
+
+      const file =
+
+        event.target.files[0];
+
+      if (!file) {
+
+        return;
+
+      }
+
+      /*
+
+      Show photo preview
+
+      */
+
+      const preview =
+
+        document.getElementById(
+
+          "preview"
+
+        );
+
+      preview.src =
+
+        URL.createObjectURL(file);
+
+      preview.style.display =
+
+        "block";
+
+      /*
+
+      Show analysis status
+
+      */
+
+      const status =
+
+        document.getElementById(
+
+          "analysisStatus"
+
+        );
+
+      status.textContent =
+
+        "Analyzing your food...";
+
+      status.style.display =
+
+        "block";
+
+      /*
+
+      Reset previous result
+
+      */
+
+      currentCalories = 0;
+
+      document
+
+        .getElementById("result")
+
+        .style.display =
+
+          "none";
+
+      /*
+
+      Prepare photo for API
+
+      */
+
+      const formData =
+
+        new FormData();
+
+      formData.append(
+
+        "image",
+
+        file
+
+      );
+
+      /*
+
+      Send photo to
+
+      FTDieta food-analysis API
+
+      */
+
+      try {
+
+        const response =
+
+          await fetch(
+
+            "/api/analyze-food",
+
+            {
+
+              method: "POST",
+
+              body: formData
+
+            }
+
+          );
+
+        /*
+
+        Detect API errors
+
+        */
+
+        if (!response.ok) {
+
+          throw new Error(
+
+            "Food analysis API returned " +
+
+            response.status
+
+          );
+
+        }
+
+        /*
+
+        Read API response
+
+        */
+
+        const data =
+
+          await response.json();
+
+        /*
+
+        Store calorie estimate
+
+        */
+
+        currentCalories =
+
+          Number(
+
+            data.calories
+
+          ) || 0;
+
+        /*
+
+        Display food name
+
+        */
+
+        document
+
+          .getElementById(
+
+            "foodName"
+
+          )
+
+          .textContent =
+
+            data.foodName ||
+
+            "Estimated meal";
+
+        /*
+
+        Display calories
+
+        */
+
+        document
+
+          .getElementById(
+
+            "estimatedCalories"
+
+          )
+
+          .textContent =
+
+            currentCalories;
+
+        /*
+
+        Hide analysis message
+
+        */
+
+        status.style.display =
+
+          "none";
+
+        /*
+
+        Show result
+
+        */
+
+        document
+
+          .getElementById(
+
+            "result"
+
+          )
+
+          .style.display =
+
+            "block";
+
+      }
+
+      catch (error) {
+
+        console.error(
+
+          "Food analysis error:",
+
+          error
+
+        );
+
+        currentCalories = 0;
+
+        status.textContent =
+
+          "Unable to analyze the photo.";
+
+        status.style.display =
+
+          "block";
+
+        alert(
+
+          "Unable to analyze the food image. " +
+
+          "Please try again."
+
+        );
+
+      }
+
+    }
+
+  );
+
+/*
+
+========================================
+
+ADD CALORIES
+
+========================================
+
+*/
 
 function addCalories() {
 
-  todayTotal += currentCalories;
-  weekTotal += currentCalories;
-  monthTotal += currentCalories;
+  /*
+
+  Prevent adding an invalid result
+
+  */
+
+  if (currentCalories <= 0) {
+
+    alert(
+
+      "No calorie estimate " +
+
+      "is available yet."
+
+    );
+
+    return;
+
+  }
+
+  /*
+
+  Add calories
+
+  */
+
+  todayTotal +=
+
+    currentCalories;
+
+  weekTotal +=
+
+    currentCalories;
+
+  monthTotal +=
+
+    currentCalories;
+
+  /*
+
+  Save totals on phone/browser
+
+  */
 
   localStorage.setItem(
-    "todayCalories",o
+
+    "todayCalories",
+
     todayTotal
+
   );
 
   localStorage.setItem(
+
     "weekCalories",
+
     weekTotal
+
   );
 
   localStorage.setItem(
+
     "monthCalories",
+
     monthTotal
+
   );
+
+  /*
+
+  Update screen
+
+  */
 
   updateTotals();
 
+  /*
+
+  Ask about another food
+
+  */
+
   const another =
+
     confirm(
-      "Calories added! Would you like to take another food photo?"
+
+      "Calories added! " +
+
+      "Would you like to take " +
+
+      "another food photo?"
+
     );
 
   if (another) {
 
-    document.getElementById("foodPhoto").click();
+    resetFood();
 
-  } else {
+    document
+
+      .getElementById(
+
+        "foodPhoto"
+
+      )
+
+      .click();
+
+  }
+
+  else {
 
     alert(
+
       "Today's total: " +
+
       todayTotal +
+
       " calories\n\n" +
+
       "This week: " +
+
       weekTotal +
+
       " calories\n\n" +
+
       "This month: " +
+
       monthTotal +
+
       " calories"
+
     );
+
+    resetFood();
 
   }
 
 }
 
+/*
+
+========================================
+
+CANCEL FOOD
+
+========================================
+
+*/
 
 function cancelFood() {
 
+  resetFood();
+
+}
+
+/*
+
+========================================
+
+RESET PHOTO
+
+========================================
+
+*/
+
+function resetFood() {
+
   currentCalories = 0;
 
-  document.getElementById("result").style.display =
-    "none";
+  document
 
-  document.getElementById("preview").style.display =
-    "none";
+    .getElementById(
 
-  document.getElementById("foodPhoto").value = "";
+      "result"
+
+    )
+
+    .style.display =
+
+      "none";
+
+  document
+
+    .getElementById(
+
+      "preview"
+
+    )
+
+    .style.display =
+
+      "none";
+
+  document
+
+    .getElementById(
+
+      "analysisStatus"
+
+    )
+
+    .style.display =
+
+      "none";
+
+  document
+
+    .getElementById(
+
+      "foodPhoto"
+
+    )
+
+    .value =
+
+      "";
 
 }
 
 </script>
 
 </body>
+
 </html>
