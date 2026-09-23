@@ -1,4 +1,4 @@
-p<!DOCTYPE html>
+pp<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -264,7 +264,32 @@ document.getElementById("foodPhoto")
 
   preview.style.display = "block";
 
-currentCalories = 350;
+const formData = new FormData();
+formData.append("image", file);
+try {
+  const response = await fetch("/api/analyze-food", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await response.json();
+
+  document.getElementById("foodName").textContent =
+    data.foodName || "Estimated meal";
+
+  currentCalories = data.calories || 0;
+
+  document.getElementById("estimatedCalories").textContent =
+    currentCalories;
+
+  document.getElementById("result").style.display = "block";
+
+} catch (error) {
+  console.error("Food analysis error:", error);
+  alert("Unable to analyze the food image. Please try again.");
+}
+
+
 
   document.getElementById("foodName").textContent =
     "Estimated meal";
